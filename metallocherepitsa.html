@@ -1010,10 +1010,7 @@ input, select, textarea { font-family: inherit; }
 /* ── NAV layout ── */
 .nav-row { justify-content: space-between !important; }
 .nav-links-desktop {
-  display: flex;
-  gap: 22px;
-  flex: 1;
-  justify-content: center;
+  display: none;
 }
 .nav-links-desktop a { font-size: 13.5px; color: var(--fg-muted); white-space: nowrap; }
 .nav-links-desktop a:hover { color: var(--fg); }
@@ -1022,7 +1019,7 @@ input, select, textarea { font-family: inherit; }
 
 /* ── BURGER ── */
 .nav-burger {
-  display: none;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -1120,12 +1117,7 @@ input, select, textarea { font-family: inherit; }
   .nav-row { gap: 16px; }
 }
 
-/* ════ 1050px — бургер ════ */
-@media (max-width: 1050px) {
-  .nav-links-desktop { display: none !important; }
-  .nav-burger { display: flex !important; }
-  .nav-phone  { display: none; }
-}
+/* скрываем телефон при ≤768px — уже есть ниже */
 
 /* ════ 1000px ════ */
 @media (max-width: 1000px) {
