@@ -1006,26 +1006,192 @@ input, select, textarea { font-family: inherit; }
 }
 
 </style>
+<style id="svc-styles">
+/* ── NAV layout ── */
+.nav-row { justify-content: space-between !important; }
+.nav-links-desktop {
+  display: flex;
+  gap: 22px;
+  flex: 1;
+  justify-content: center;
+}
+.nav-links-desktop a { font-size: 13.5px; color: var(--fg-muted); white-space: nowrap; }
+.nav-links-desktop a:hover { color: var(--fg); }
+.nav-links-desktop a.active { color: var(--accent); font-weight: 600; }
+.nav-cta { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 
-<style>
+/* ── BURGER ── */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--border-strong);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .12s, border-color .12s;
+  padding: 0;
+}
+.nav-burger:hover { background: var(--bg-sunken); border-color: var(--fg-soft); }
+.nav-burger span {
+  display: block;
+  width: 16px; height: 1.5px;
+  background: var(--fg);
+  border-radius: 2px;
+  transition: transform .25s cubic-bezier(.4,0,.2,1), opacity .2s, width .2s;
+  transform-origin: center;
+}
+.nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; width: 0; }
+.nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* ── BURGER PANEL ── */
+.nav-panel {
+  position: fixed;
+  top: 69px; left: 0; right: 0;
+  background: color-mix(in oklab, var(--bg) 97%, transparent);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-3);
+  z-index: 49;
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .22s ease;
+}
+.nav-panel.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+.nav-panel-inner { padding: 20px 0 28px; display: flex; flex-direction: column; }
+.nav-panel-links { display: flex; flex-direction: column; }
+.nav-panel-links a {
+  padding: 13px 32px;
+  font-size: 16px;
+  color: var(--fg-muted);
+  border-bottom: 1px solid var(--border);
+  transition: color .12s, background .12s, padding-left .15s;
+}
+.nav-panel-links a:first-child { border-top: 1px solid var(--border); }
+.nav-panel-links a:hover { color: var(--fg); background: var(--bg-sunken); padding-left: 38px; }
+.nav-panel-links a.active { color: var(--accent); font-weight: 600; }
+.nav-panel-bottom { padding: 20px 32px 0; display: flex; flex-direction: column; gap: 12px; }
+.nav-panel-phone { font-family: var(--font-mono); font-size: 17px; font-weight: 600; color: var(--fg); }
+
+/* ── HERO ── */
 .svc-hero { padding: 72px 0 80px; }
 .svc-hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; }
 .svc-hero-img { border-radius: var(--r-xl); overflow: hidden; aspect-ratio: 4/3; position: relative; }
 .svc-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ── INCLUDES ── */
 .include-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .include-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px; display: flex; flex-direction: column; gap: 10px; }
-.include-card .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); display: grid; place-items: center; color: var(--accent); }
+.include-card .ic { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-soft); display: grid; place-items: center; color: var(--accent); flex-shrink: 0; }
 .include-card h4 { font-size: 16px; font-weight: 600; margin: 0; }
-.include-card p { font-size: 14px; color: var(--fg-muted); margin: 0; line-height: 1.5; }
-@media (max-width: 1100px) { .svc-hero-grid { grid-template-columns: 1fr; } }
-@media (max-width: 720px) { .include-grid { grid-template-columns: 1fr 1fr; } .svc-hero { padding: 40px 0 56px; } }
-@media (max-width: 480px) { .include-grid { grid-template-columns: 1fr; } }
+.include-card p  { font-size: 14px; color: var(--fg-muted); margin: 0; line-height: 1.5; }
 
+/* ── SPECS ── */
+.specs-table { width: 100%; border-collapse: collapse; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.specs-table td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.specs-table tr:last-child td { border-bottom: 0; }
+.specs-table td:first-child { color: var(--fg-muted); width: 42%; }
+.specs-table td:last-child  { font-weight: 500; }
 
+/* ── PRICE ── */
+.price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.price-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 28px; position: relative; display: flex; flex-direction: column; }
+.price-card.featured { border-color: var(--accent); box-shadow: var(--shadow-2); }
+.price-card-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 999px; white-space: nowrap; font-family: var(--font-mono); letter-spacing: 0.04em; }
+.price-card-name  { font-size: 13px; font-weight: 600; color: var(--fg-muted); margin-bottom: 8px; }
+.price-card-price { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px; }
+.price-card-list  { list-style: none; padding: 0; margin: 0 0 20px; flex: 1; }
+.price-card-list li { font-size: 14px; color: var(--fg-muted); padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; }
+.price-card-list li::before { content: "—"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+/* ── CONTACT ── */
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; }
+
+/* ════ 1200px ════ */
+@media (max-width: 1200px) {
+  .nav-links-desktop a { font-size: 13px; }
+  .nav-row { gap: 16px; }
+}
+
+/* ════ 1050px — бургер ════ */
+@media (max-width: 1050px) {
+  .nav-links-desktop { display: none !important; }
+  .nav-burger { display: flex !important; }
+  .nav-phone  { display: none; }
+}
+
+/* ════ 1000px ════ */
+@media (max-width: 1000px) {
+  .price-grid { grid-template-columns: 1fr; max-width: 480px; }
+  .svc-hero-grid { grid-template-columns: 1fr; gap: 40px; }
+  .svc-hero-img { aspect-ratio: 16/9; max-width: 600px; }
+  .include-grid { grid-template-columns: repeat(2, 1fr); }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .process { grid-template-columns: repeat(3, 1fr); }
+  .process-step:nth-child(3) { border-right: 0; }
+  .certs { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ════ 768px ════ */
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .section { padding: 56px 0; }
+  .svc-hero { padding: 32px 0 40px; }
+  .svc-hero-img { display: none; }
+  .svc-hero-grid { grid-template-columns: 1fr !important; }
+  .nav-phone { display: none; }
+  .nav-row { gap: 12px; }
+  .brand-sub { display: none; }
+  .hero-trust { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .hero-trust-num { font-size: 22px; }
+  .section-head { grid-template-columns: 1fr; gap: 12px; }
+  .process { grid-template-columns: repeat(2, 1fr); }
+  .process-step { border-right: 0 !important; border-bottom: 1px solid var(--border); }
+  .process-step:last-child { border-bottom: 0; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .form { padding: 24px; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* ════ 560px ════ */
+@media (max-width: 560px) {
+  .container { padding: 0 16px; }
+  .include-grid { grid-template-columns: 1fr !important; }
+  .include-card { padding: 18px; }
+  .process { grid-template-columns: 1fr !important; }
+  .price-grid { max-width: 100%; }
+  .price-card-price { font-size: 28px; }
+  .specs-table td { padding: 10px 14px; }
+  .specs-table td:first-child { width: auto; }
+  .hero-trust { grid-template-columns: 1fr 1fr; }
+  .hero-trust-num { font-size: 20px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
+  .guarantees { padding: 24px; }
+  .guarantees-grid { grid-template-columns: 1fr 1fr !important; gap: 16px; }
+  .nav-panel-links a { padding: 12px 20px; font-size: 15px; }
+  .nav-panel-bottom { padding: 16px 20px 0; }
+}
+
+/* ════ 400px ════ */
+@media (max-width: 400px) {
+  .btn-primary.btn-sm { padding: 9px 12px; font-size: 12px; }
+  .h1 { font-size: 30px; }
+  .h2 { font-size: 24px; }
+  .hero-trust { grid-template-columns: 1fr 1fr; }
+  .hero-trust > div:nth-child(3) { display: none; }
+  .guarantees-grid { grid-template-columns: 1fr !important; }
+}
 </style>
-
-
-
 </head>
 <body>
 <nav class="nav">
@@ -1037,7 +1203,7 @@ input, select, textarea { font-family: inherit; }
         <span class="brand-sub">Кровля · Махачкала</span>
       </div>
     </a>
-    <div class="nav-links nav-links-desktop">
+    <div class="nav-links-desktop">
       <a href="nk-krovlya.html">Главная</a>
       <a href="montazh-krovli.html">Монтаж под ключ</a>
       <a href="metallocherepitsa.html" class="active">Металлочерепица</a>
@@ -1046,7 +1212,7 @@ input, select, textarea { font-family: inherit; }
       <a href="snegozaderzhatel.html">Снегозадержатели</a>
       <a href="vodostochnye-sistemy.html">Водосточные системы</a>
     </div>
-    <div class="nav-cta" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <div class="nav-cta">
       <a class="nav-phone" href="tel:+79286777815">+7 (928) 677-78-15</a>
       <a href="#contact" class="btn btn-primary btn-sm">Заявка</a>
       <button id="nav-burger" class="nav-burger" aria-label="Открыть меню" aria-expanded="false">
@@ -1058,12 +1224,12 @@ input, select, textarea { font-family: inherit; }
     <div class="container nav-panel-inner">
       <div class="nav-panel-links">
         <a href="nk-krovlya.html">Главная</a>
-      <a href="montazh-krovli.html">Монтаж под ключ</a>
-      <a href="metallocherepitsa.html" class="active">Металлочерепица</a>
-      <a href="profnastil.html">Профнастил</a>
-      <a href="falcevaya-krovlya.html">Фальцевая кровля</a>
-      <a href="snegozaderzhatel.html">Снегозадержатели</a>
-      <a href="vodostochnye-sistemy.html">Водосточные системы</a>
+        <a href="montazh-krovli.html">Монтаж под ключ</a>
+        <a href="metallocherepitsa.html" class="active">Металлочерепица</a>
+        <a href="profnastil.html">Профнастил</a>
+        <a href="falcevaya-krovlya.html">Фальцевая кровля</a>
+        <a href="snegozaderzhatel.html">Снегозадержатели</a>
+        <a href="vodostochnye-sistemy.html">Водосточные системы</a>
       </div>
       <div class="nav-panel-bottom">
         <span class="nav-panel-phone">+7 (928) 677-78-15</span>
@@ -1491,43 +1657,19 @@ function submitForm(e) {
 }
 </script>
 
+
 <script>
 (function () {
   var burger = document.getElementById('nav-burger');
   var panel  = document.getElementById('nav-panel');
   if (!burger || !panel) return;
-
-  function close() {
-    burger.classList.remove('open');
-    panel.classList.remove('open');
-    burger.setAttribute('aria-expanded', 'false');
-  }
-  function toggle() {
-    var opening = !panel.classList.contains('open');
-    opening ? open() : close();
-  }
-  function open() {
-    burger.classList.add('open');
-    panel.classList.add('open');
-    burger.setAttribute('aria-expanded', 'true');
-  }
-
-  burger.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
-
-  // Закрыть при клике вне меню
-  document.addEventListener('click', function (e) {
-    if (!e.target.closest('.nav')) close();
-  });
-
-  // Закрыть при нажатии Escape
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') close();
-  });
-
-  // Закрыть при клике по ссылке в панели
-  panel.querySelectorAll('a').forEach(function (a) {
-    a.addEventListener('click', close);
-  });
+  function close() { burger.classList.remove('open'); panel.classList.remove('open'); burger.setAttribute('aria-expanded','false'); }
+  function open()  { burger.classList.add('open');    panel.classList.add('open');    burger.setAttribute('aria-expanded','true');  }
+  function toggle(){ panel.classList.contains('open') ? close() : open(); }
+  burger.addEventListener('click', function(e){ e.stopPropagation(); toggle(); });
+  document.addEventListener('click', function(e){ if (!e.target.closest('.nav')) close(); });
+  document.addEventListener('keydown', function(e){ if (e.key==='Escape') close(); });
+  panel.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', close); });
 })();
 </script>
 </body>
