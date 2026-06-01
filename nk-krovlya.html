@@ -1006,6 +1006,153 @@ input, select, textarea { font-family: inherit; }
 
   .type-card.small   { grid-column: span 3; }
   .type-card.featured{ grid-column: span 6; }
+
+/* ════════════════════════════════════════
+   EXTENDED RESPONSIVE — MAIN PAGE
+   ════════════════════════════════════════ */
+
+/* ── 900px: nav phone hidden, hero photo min-height reduced ── */
+@media (max-width: 900px) {
+  .nav-phone { display: none; }
+  .nav-cta { gap: 10px; }
+
+  /* hero: уменьшаем min-height у фото-коллажа */
+  .hero-grid > div:last-child { min-height: 360px !important; }
+  .hero-grid > div:last-child > div:first-child { flex: 0 0 56% !important; }
+
+  /* type cards: 2 в ряд на средних экранах */
+  .type-card.small { grid-column: span 6 !important; }
+
+  /* калькулятор */
+  .calc { grid-template-columns: 1fr !important; }
+
+  /* certs */
+  .certs { grid-template-columns: 1fr !important; }
+}
+
+/* ── 720px: уже есть выше, допиливаем ── */
+@media (max-width: 720px) {
+  /* nav */
+  .nav-row { gap: 12px; }
+  .brand-sub { display: none; }
+
+  /* hero */
+  .hero { padding: 28px 0 48px; }
+  .hero-grid > div:last-child { min-height: 0 !important; }
+  .hero-grid > div:last-child > div:first-child { flex: 0 0 60% !important; min-height: 200px; }
+  .hero-cta { flex-wrap: wrap; gap: 10px; }
+  .hero-lede { font-size: 15px; }
+  .hero-trust { gap: 16px; padding-top: 18px; }
+  .hero-trust-num { font-size: 22px; }
+
+  /* section heads */
+  .section { padding: 56px 0; }
+
+  /* type cards: по одной */
+  .type-card.small, .type-card.featured { grid-column: span 12 !important; }
+
+  /* gallery — переопределяем inline grid-template через потомков */
+  #cases .container > div:last-child {
+    grid-template-rows: auto !important;
+    grid-template-columns: 1fr !important;
+  }
+  #cases .container > div:last-child > div {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    aspect-ratio: 4 / 3;
+    min-height: 220px;
+  }
+  /* gallery header stats */
+  #cases .container > div:first-child { flex-direction: column; align-items: flex-start !important; gap: 16px !important; }
+
+  /* calc: убираем лишний padding */
+  .calc-summary { padding: 20px; }
+  .calc-total-v { font-size: 28px; }
+
+  /* reviews */
+  .review { padding: 20px; }
+
+  /* certs */
+  .certs-list { grid-template-columns: 1fr 1fr; }
+  .guarantees { padding: 28px; }
+  .guarantee-num { font-size: 32px; }
+
+  /* contact */
+  .contact-info .h2 { font-size: 28px; }
+
+  /* footer */
+  .footer { padding: 40px 0 24px; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
+}
+
+/* ── 560px ── */
+@media (max-width: 560px) {
+  .container { padding: 0 16px; }
+
+  /* nav */
+  .btn.btn-sm { padding: 9px 14px; font-size: 12px; }
+
+  /* hero */
+  .hero-grid > div:last-child > div:first-child { min-height: 180px; }
+  .hero-trust { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .hero-trust-num { font-size: 20px; }
+  .hero-trust-label { font-size: 11px; }
+
+  /* type cards: убираем дабл-колонку для small */
+  .type-card { padding: 16px; }
+  .type-card-svg { margin-bottom: 14px; }
+
+  /* process: 1 колонка */
+  .process { grid-template-columns: 1fr !important; }
+  .process-step { border-bottom: 1px solid var(--border); }
+  .process-step:last-child { border-bottom: 0; }
+
+  /* calc panel */
+  .cfg-options { grid-template-columns: repeat(3, 1fr); }
+  .cfg-option { padding: 8px 4px; }
+  .cfg-option .lab { font-size: 10px; }
+
+  /* gallery header stats: скрываем часть */
+  #cases .container > div:first-child > div > div:nth-child(n+3) { display: none; }
+
+  /* reviews */
+  .review { padding: 18px; gap: 14px; }
+  .review-text { font-size: 14px; }
+
+  /* guarantees grid */
+  .guarantees-grid { grid-template-columns: 1fr 1fr !important; gap: 16px; }
+
+  /* faq */
+  .faq-q { font-size: 15px; padding: 18px 0; }
+
+  /* form */
+  .form { padding: 20px; }
+
+  /* footer */
+  .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+  .footer-bottom { font-size: 11px; }
+}
+
+/* ── 400px ── */
+@media (max-width: 400px) {
+  .hero-cta .btn { width: 100%; justify-content: center; }
+  .hero-trust { grid-template-columns: 1fr 1fr; }
+  .hero-trust-num { font-size: 18px; }
+
+  /* убираем третий стат в hero trust */
+  .hero-trust > div:nth-child(3) { display: none; }
+
+  /* calc */
+  .cfg-size-row { flex-direction: column; }
+  .calc-total-v { font-size: 24px; }
+
+  /* guarantees */
+  .guarantees-grid { grid-template-columns: 1fr !important; }
+  .guarantee-num { font-size: 36px; }
+
+  /* type cards */
+  .type-card-meta { flex-direction: column; gap: 4px; }
+}
 </style>
 </head>
 <body>
