@@ -1020,6 +1020,85 @@ input, select, textarea { font-family: inherit; }
 @media (max-width: 1100px) { .svc-hero-grid { grid-template-columns: 1fr; } }
 @media (max-width: 720px) { .include-grid { grid-template-columns: 1fr 1fr; } .svc-hero { padding: 40px 0 56px; } }
 @media (max-width: 480px) { .include-grid { grid-template-columns: 1fr; } }
+
+<style>
+/* ── burger nav ── */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .12s;
+}
+.nav-burger:hover { background: var(--bg-sunken); }
+.nav-burger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--fg);
+  border-radius: 2px;
+  transition: transform .2s ease, opacity .2s ease;
+  transform-origin: center;
+}
+.nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.nav-mobile-panel {
+  display: none;
+  background: color-mix(in oklab, var(--bg) 96%, transparent);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.nav-mobile-panel.open { display: block; }
+.nav-mobile-links {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0 16px;
+}
+.nav-mobile-links a {
+  padding: 11px 32px;
+  font-size: 15px;
+  color: var(--fg-muted);
+  border-bottom: 1px solid transparent;
+  transition: color .12s, background .12s;
+}
+.nav-mobile-links a:hover { color: var(--fg); background: var(--bg-sunken); }
+.nav-mobile-links a.active { color: var(--accent); font-weight: 600; }
+.nav-mobile-cta {
+  padding: 0 32px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.nav-mobile-phone {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--fg);
+  padding: 11px 32px;
+}
+
+@media (max-width: 1050px) {
+  .nav-links-desktop { display: none !important; }
+  .nav-burger { display: flex; }
+  .nav-phone { display: none; }
+}
+@media (max-width: 480px) {
+  .nav-cta .btn-primary { display: none; }
+}
+</style>
+
 </style>
 </head>
 <body>
@@ -1032,19 +1111,39 @@ input, select, textarea { font-family: inherit; }
         <span class="brand-sub">Кровля · Махачкала</span>
       </div>
     </a>
-    <div class="nav-links">
+    <div class="nav-links nav-links-desktop">
       <a href="nk-krovlya.html">Главная</a>
-          <a href="montazh-krovli.html">Монтаж</a>
+          <a href="montazh-krovli.html">Монтаж под ключ</a>
           <a href="metallocherepitsa.html">Металлочерепица</a>
-          <a href="profnastil.html" style="color:var(--fg)">Профнастил</a>
-          <a href="falcevaya-krovlya.html">Фальцевая</a>
+          <a href="profnastil.html" class="active">Профнастил</a>
+          <a href="falcevaya-krovlya.html">Фальцевая кровля</a>
           <a href="snegozaderzhatel.html">Снегозадержатели</a>
-          <a href="vodostochnye-sistemy.html">Водосток</a>
-          
+          <a href="vodostochnye-sistemy.html">Водосточные системы</a>
     </div>
     <div class="nav-cta">
       <a class="nav-phone" href="tel:+79286777815">+7 (928) 677-78-15</a>
       <a href="#contact" class="btn btn-primary btn-sm">Заявка</a>
+      <button class="nav-burger" id="nav-burger" aria-label="Меню" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile-panel" id="nav-mobile-panel">
+    <div class="nav-mobile-links">
+      <a href="nk-krovlya.html">Главная</a>
+      <a href="montazh-krovli.html">Монтаж под ключ</a>
+      <a href="metallocherepitsa.html">Металлочерепица</a>
+      <a href="profnastil.html" class="active">Профнастил</a>
+      <a href="falcevaya-krovlya.html">Фальцевая кровля</a>
+      <a href="snegozaderzhatel.html">Снегозадержатели</a>
+      <a href="vodostochnye-sistemy.html">Водосточные системы</a>
+    </div>
+    <div class="nav-mobile-cta">
+      <span class="nav-mobile-phone">+7 (928) 677-78-15</span>
+      <a href="#contact" class="btn btn-primary btn-arrow" style="align-self:flex-start">
+        Вызвать замерщика
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
 </nav>
@@ -1462,6 +1561,23 @@ function submitForm(e) {
   e.target.reset();
   setTimeout(function(){ s.style.display = 'none'; }, 6000);
 }
+</script>
+<script>
+(function(){
+  var burger = document.getElementById('nav-burger');
+  var panel  = document.getElementById('nav-mobile-panel');
+  if (!burger || !panel) return;
+  burger.addEventListener('click', function(){
+    burger.classList.toggle('open');
+    panel.classList.toggle('open');
+  });
+  document.addEventListener('click', function(e){
+    if (!e.target.closest('.nav')) {
+      burger.classList.remove('open');
+      panel.classList.remove('open');
+    }
+  });
+})();
 </script>
 </body>
 </html>
