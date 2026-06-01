@@ -1021,85 +1021,234 @@ input, select, textarea { font-family: inherit; }
 @media (max-width: 720px) { .include-grid { grid-template-columns: 1fr 1fr; } .svc-hero { padding: 40px 0 56px; } }
 @media (max-width: 480px) { .include-grid { grid-template-columns: 1fr; } }
 
-<style>
-/* ── burger nav ── */
-.nav-burger {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 38px;
-  height: 38px;
-  border-radius: var(--r-md);
-  border: 1px solid var(--border);
-  background: transparent;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: background .12s;
-}
-.nav-burger:hover { background: var(--bg-sunken); }
-.nav-burger span {
-  display: block;
-  width: 18px;
-  height: 1.5px;
-  background: var(--fg);
-  border-radius: 2px;
-  transition: transform .2s ease, opacity .2s ease;
-  transform-origin: center;
-}
-.nav-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-.nav-burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.nav-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
-.nav-mobile-panel {
-  display: none;
-  background: color-mix(in oklab, var(--bg) 96%, transparent);
-  backdrop-filter: saturate(140%) blur(10px);
-  -webkit-backdrop-filter: saturate(140%) blur(10px);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+</style>
+
+<style id="adaptive">
+/* ═══ NAV ═══ */
+.nav-links-desktop { display: flex; gap: 22px; }
+.nav-links-desktop a { font-size: 13.5px; color: var(--fg-muted); white-space: nowrap; }
+.nav-links-desktop a:hover,
+.nav-links-desktop a.active { color: var(--fg); }
+.nav-links-desktop a.active { font-weight: 600; color: var(--accent); }
+
+/* ═══ HERO ═══ */
+.svc-hero { padding: 72px 0 80px; }
+.svc-hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 64px;
+  align-items: center;
 }
-.nav-mobile-panel.open { display: block; }
-.nav-mobile-links {
-  display: flex;
-  flex-direction: column;
-  padding: 12px 0 16px;
+.svc-hero-img {
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  position: relative;
 }
-.nav-mobile-links a {
-  padding: 11px 32px;
-  font-size: 15px;
-  color: var(--fg-muted);
-  border-bottom: 1px solid transparent;
-  transition: color .12s, background .12s;
+.svc-hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ═══ INCLUDES ═══ */
+.include-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
-.nav-mobile-links a:hover { color: var(--fg); background: var(--bg-sunken); }
-.nav-mobile-links a.active { color: var(--accent); font-weight: 600; }
-.nav-mobile-cta {
-  padding: 0 32px 16px;
+.include-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.nav-mobile-phone {
-  font-family: var(--font-mono);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--fg);
-  padding: 11px 32px;
+.include-card .ic {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  display: grid; place-items: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.include-card h4 { font-size: 16px; font-weight: 600; margin: 0; }
+.include-card p  { font-size: 14px; color: var(--fg-muted); margin: 0; line-height: 1.5; }
+
+/* ═══ SPECS TABLE ═══ */
+.specs-table { width: 100%; border-collapse: collapse; background: var(--bg); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.specs-table td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.specs-table tr:last-child td { border-bottom: 0; }
+.specs-table td:first-child { color: var(--fg-muted); width: 42%; }
+.specs-table td:last-child  { font-weight: 500; }
+
+/* ═══ PRICE CARDS ═══ */
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.price-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.price-card.featured { border-color: var(--accent); box-shadow: var(--shadow-2); }
+.price-card-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 4px 12px; border-radius: 999px;
+  white-space: nowrap;
+  font-family: var(--font-mono); letter-spacing: 0.04em;
+}
+.price-card-name  { font-size: 13px; font-weight: 600; color: var(--fg-muted); margin-bottom: 8px; }
+.price-card-price { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px; }
+.price-card-list  { list-style: none; padding: 0; margin: 0 0 20px; flex: 1; }
+.price-card-list li { font-size: 14px; color: var(--fg-muted); padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 8px; }
+.price-card-list li::before { content: "—"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+
+/* ═══ CONTACT ═══ */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
 }
 
+/* ════════════════════════
+   BREAKPOINT  1200px
+   ════════════════════════ */
+@media (max-width: 1200px) {
+  .nav-links-desktop a { font-size: 13px; }
+  .nav-row { gap: 20px; }
+}
+
+/* ════════════════════════
+   BREAKPOINT  1050px
+   ════════════════════════ */
 @media (max-width: 1050px) {
-  .nav-links-desktop { display: none !important; }
-  .nav-burger { display: flex; }
-  .nav-phone { display: none; }
+  /* nav: скрыть ссылки, оставить лого + телефон + кнопку */
+  .nav-links-desktop { display: none; }
+  .nav-phone { font-size: 13px; }
+
+  /* hero: одна колонка, картинка снизу */
+  .svc-hero { padding: 48px 0 64px; }
+  .svc-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .svc-hero-img { aspect-ratio: 16 / 9; max-width: 600px; }
+  .hero-trust { max-width: 100%; }
+
+  /* includes: 2 колонки */
+  .include-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* process */
+  .process { grid-template-columns: repeat(3, 1fr); }
+  .process-step:nth-child(3) { border-right: 0; }
+
+  /* price: одна колонка */
+  .price-grid { grid-template-columns: 1fr; max-width: 480px; }
+
+  /* contact */
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+
+  /* certs/guarantees */
+  .certs { grid-template-columns: 1fr; }
 }
-@media (max-width: 480px) {
-  .nav-cta .btn-primary { display: none; }
+
+/* ════════════════════════
+   BREAKPOINT  768px
+   ════════════════════════ */
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .section { padding: 56px 0; }
+  .svc-hero { padding: 32px 0 48px; }
+
+  /* nav: скрыть телефон, оставить лого + кнопку */
+  .nav-phone { display: none; }
+  .nav-row { gap: 12px; }
+  .nav-cta { gap: 10px; }
+
+  /* hero text */
+  .hero-trust { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .hero-trust-num { font-size: 22px; }
+
+  /* includes: 2 колонки  */
+  .include-grid { gap: 12px; }
+  .include-card { padding: 18px; }
+
+  /* process: 2 колонки */
+  .process { grid-template-columns: repeat(2, 1fr); }
+  .process-step { border-right: 0 !important; border-bottom: 1px solid var(--border); }
+  .process-step:last-child { border-bottom: 0; }
+
+  /* section head */
+  .section-head { grid-template-columns: 1fr; gap: 12px; }
+
+  /* specs table */
+  .specs-table td { padding: 12px 16px; }
+  .specs-table td:first-child { width: auto; min-width: 130px; }
+
+  /* reviews */
+  .reviews-grid { grid-template-columns: 1fr; }
+
+  /* footer */
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+
+  /* form */
+  .form { padding: 24px; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* ════════════════════════
+   BREAKPOINT  560px
+   ════════════════════════ */
+@media (max-width: 560px) {
+  /* includes: 1 колонка */
+  .include-grid { grid-template-columns: 1fr; }
+
+  /* hero trust: 2 колонки */
+  .hero-trust { grid-template-columns: repeat(2, 1fr); }
+
+  /* svc image */
+  .svc-hero-img { aspect-ratio: 4 / 3; }
+
+  /* process: 1 колонка */
+  .process { grid-template-columns: 1fr; }
+
+  /* specs: стэк ячейки */
+  .specs-table tr { display: flex; flex-direction: column; }
+  .specs-table td { width: 100% !important; padding: 8px 16px; }
+  .specs-table td:first-child { padding-bottom: 2px; font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; border-bottom: 0; }
+  .specs-table td:last-child  { padding-top: 2px; padding-bottom: 14px; }
+
+  /* price card */
+  .price-grid { max-width: 100%; }
+  .price-card-price { font-size: 28px; }
+
+  /* footer */
+  .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
+
+  /* brand */
+  .brand-name { font-size: 15px; }
+}
+
+/* ════════════════════════
+   BREAKPOINT  400px
+   ════════════════════════ */
+@media (max-width: 400px) {
+  .btn-primary.btn-sm { padding: 9px 14px; font-size: 12px; }
+  .h1 { font-size: 32px; }
+  .h2 { font-size: 26px; }
+  .hero-trust { grid-template-columns: 1fr 1fr; }
 }
 </style>
 
-</style>
 </head>
 <body>
 <nav class="nav">
@@ -1111,39 +1260,18 @@ input, select, textarea { font-family: inherit; }
         <span class="brand-sub">Кровля · Махачкала</span>
       </div>
     </a>
-    <div class="nav-links nav-links-desktop">
+    <div class="nav-links-desktop">
       <a href="nk-krovlya.html">Главная</a>
-          <a href="montazh-krovli.html">Монтаж под ключ</a>
-          <a href="metallocherepitsa.html">Металлочерепица</a>
-          <a href="profnastil.html">Профнастил</a>
-          <a href="falcevaya-krovlya.html">Фальцевая кровля</a>
-          <a href="snegozaderzhatel.html">Снегозадержатели</a>
-          <a href="vodostochnye-sistemy.html" class="active">Водосточные системы</a>
+      <a href="montazh-krovli.html">Монтаж</a>
+      <a href="metallocherepitsa.html">Металлочерепица</a>
+      <a href="profnastil.html">Профнастил</a>
+      <a href="falcevaya-krovlya.html">Фальцевая</a>
+      <a href="snegozaderzhatel.html">Снегозадержатели</a>
+      <a href="vodostochnye-sistemy.html" class="active">Водосток</a>
     </div>
     <div class="nav-cta">
       <a class="nav-phone" href="tel:+79286777815">+7 (928) 677-78-15</a>
       <a href="#contact" class="btn btn-primary btn-sm">Заявка</a>
-      <button class="nav-burger" id="nav-burger" aria-label="Меню" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-  <div class="nav-mobile-panel" id="nav-mobile-panel">
-    <div class="nav-mobile-links">
-      <a href="nk-krovlya.html">Главная</a>
-      <a href="montazh-krovli.html">Монтаж под ключ</a>
-      <a href="metallocherepitsa.html">Металлочерепица</a>
-      <a href="profnastil.html">Профнастил</a>
-      <a href="falcevaya-krovlya.html">Фальцевая кровля</a>
-      <a href="snegozaderzhatel.html">Снегозадержатели</a>
-      <a href="vodostochnye-sistemy.html" class="active">Водосточные системы</a>
-    </div>
-    <div class="nav-mobile-cta">
-      <span class="nav-mobile-phone">+7 (928) 677-78-15</span>
-      <a href="#contact" class="btn btn-primary btn-arrow" style="align-self:flex-start">
-        Вызвать замерщика
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-      </a>
     </div>
   </div>
 </nav>
@@ -1290,46 +1418,46 @@ input, select, textarea { font-family: inherit; }
         <h2 class="h2">Виды водосточных систем</h2>
       </div>
     </div>
-    <table style="width:100%;border-collapse:collapse;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden">
+    <table class="specs-table">
       <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Материалы</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">ПВХ-пластик, оцинкованная сталь, алюминий, медь</td>
+    <td>Материалы</td>
+    <td>ПВХ-пластик, оцинкованная сталь, алюминий, медь</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Диаметр желоба</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">100 мм, 125 мм, 150 мм, 200 мм</td>
+    <td>Диаметр желоба</td>
+    <td>100 мм, 125 мм, 150 мм, 200 мм</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Диаметр трубы</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">75 мм, 90 мм, 100 мм, 120 мм</td>
+    <td>Диаметр трубы</td>
+    <td>75 мм, 90 мм, 100 мм, 120 мм</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Уклон желоба</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">2–5 мм на 1 пог.м в сторону воронки</td>
+    <td>Уклон желоба</td>
+    <td>2–5 мм на 1 пог.м в сторону воронки</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Расстояние между кронштейнами</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">600–900 мм</td>
+    <td>Расстояние между кронштейнами</td>
+    <td>600–900 мм</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Расстояние между воронками</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">До 12 м по горизонтальному желобу</td>
+    <td>Расстояние между воронками</td>
+    <td>До 12 м по горизонтальному желобу</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Крепление труб</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">Каждые 1.5–2 м к стене или стропилу</td>
+    <td>Крепление труб</td>
+    <td>Каждые 1.5–2 м к стене или стропилу</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Срок службы ПВХ</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">25–35 лет</td>
+    <td>Срок службы ПВХ</td>
+    <td>25–35 лет</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Срок службы металл</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">40–80 лет (зависит от покрытия)</td>
+    <td>Срок службы металл</td>
+    <td>40–80 лет (зависит от покрытия)</td>
   </tr>
 <tr>
-    <td style="padding:14px 20px;color:var(--fg-muted);font-size:14px;border-bottom:1px solid var(--border);width:40%">Гарантия на монтаж</td>
-    <td style="padding:14px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--border)">10 лет</td>
+    <td>Гарантия на монтаж</td>
+    <td>10 лет</td>
   </tr>
 
     </table>
@@ -1345,32 +1473,32 @@ input, select, textarea { font-family: inherit; }
       </div>
       <div class="section-head-right">Цены ориентировочные. Точную стоимость рассчитаем после бесплатного замера.</div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;">
+    <div class="price-grid">
+      <div class="price-card">
     
-    <div style="font-size:13px;font-weight:600;color:var(--fg-muted);margin-bottom:8px">ПВХ Эконом</div>
-    <div style="font-size:36px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px">от 320 ₽/пог.м</div>
-    <ul style="list-style:none;padding:0;margin:0 0 20px"><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Желоб 100 мм, труба 75 мм</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Пластиковые кронштейны</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Монтаж включён</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Стандартные цвета (белый, коричневый)</li></ul>
+    <div class="price-card-name">ПВХ Эконом</div>
+    <div class="price-card-price">от 320 ₽/пог.м</div>
+    <ul class="price-card-list"><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Желоб 100 мм, труба 75 мм</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Пластиковые кронштейны</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Монтаж включён</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Стандартные цвета (белый, коричневый)</li></ul>
     <a href="#contact" class="btn btn-primary btn-arrow" style="width:100%;justify-content:center">
       Получить смету
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
     </a>
   </div>
-<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;border-color:var(--accent);box-shadow:var(--shadow-2)">
+<div class="price-card featured">
     <span style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:999px;white-space:nowrap;font-family:var(--font-mono);letter-spacing:0.04em">Популярный</span>
-    <div style="font-size:13px;font-weight:600;color:var(--fg-muted);margin-bottom:8px">ПВХ Стандарт</div>
-    <div style="font-size:36px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px">от 480 ₽/пог.м</div>
-    <ul style="list-style:none;padding:0;margin:0 0 20px"><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Желоб 125 мм, труба 90 мм</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Усиленные кронштейны</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Монтаж включён</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Защитные сетки</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Все фитинги и соединители</li></ul>
+    <div class="price-card-name">ПВХ Стандарт</div>
+    <div class="price-card-price">от 480 ₽/пог.м</div>
+    <ul class="price-card-list"><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Желоб 125 мм, труба 90 мм</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Усиленные кронштейны</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Монтаж включён</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Защитные сетки</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Все фитинги и соединители</li></ul>
     <a href="#contact" class="btn btn-primary btn-arrow" style="width:100%;justify-content:center">
       Получить смету
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
     </a>
   </div>
-<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:28px;position:relative;">
+<div class="price-card">
     
-    <div style="font-size:13px;font-weight:600;color:var(--fg-muted);margin-bottom:8px">Металл</div>
-    <div style="font-size:36px;font-weight:700;letter-spacing:-0.02em;margin-bottom:20px">от 720 ₽/пог.м</div>
-    <ul style="list-style:none;padding:0;margin:0 0 20px"><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Желоб 125–150 мм, труба 100 мм</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Оцинк. сталь или алюминий</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Монтаж включён</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Цвет RAL</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Срок службы 50+ лет</li></ul>
+    <div class="price-card-name">Металл</div>
+    <div class="price-card-price">от 720 ₽/пог.м</div>
+    <ul class="price-card-list"><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Желоб 125–150 мм, труба 100 мм</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Оцинк. сталь или алюминий</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Монтаж включён</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Цвет RAL</li><li style="font-size:14px;color:var(--fg-muted);padding:6px 0;border-bottom:1px solid var(--border)">Срок службы 50+ лет</li></ul>
     <a href="#contact" class="btn btn-primary btn-arrow" style="width:100%;justify-content:center">
       Получить смету
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -1441,7 +1569,7 @@ input, select, textarea { font-family: inherit; }
 
 <section class="section" id="contact">
   <div class="container">
-    <div class="contact">
+    <div class="contact-grid">
       <div class="contact-info">
         <span class="eyebrow">Контакты</span>
         <h2 class="h2">Оставьте заявку —<br>перезвоним за 15 минут</h2>
@@ -1566,22 +1694,6 @@ function submitForm(e) {
   setTimeout(function(){ s.style.display = 'none'; }, 6000);
 }
 </script>
-<script>
-(function(){
-  var burger = document.getElementById('nav-burger');
-  var panel  = document.getElementById('nav-mobile-panel');
-  if (!burger || !panel) return;
-  burger.addEventListener('click', function(){
-    burger.classList.toggle('open');
-    panel.classList.toggle('open');
-  });
-  document.addEventListener('click', function(e){
-    if (!e.target.closest('.nav')) {
-      burger.classList.remove('open');
-      panel.classList.remove('open');
-    }
-  });
-})();
-</script>
+
 </body>
 </html>
