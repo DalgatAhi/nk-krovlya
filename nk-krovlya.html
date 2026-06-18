@@ -1990,9 +1990,9 @@ const SHAPES = [
   {
     id:'вальмовая', label:'Четырёхскатная',
     fields:[
-      { key:'W1', label:'W1', hint:'длина здания — осн. длинных скатов, м' },
-      { key:'W2', label:'W2', hint:'ширина здания — осн. торцевых скатов, м' },
-      { key:'Wk', label:'Wk', hint:'длина конька, м'            },
+      { key:'W1', label:'W1', hint:'ширина ската 1, м' },
+      { key:'W2', label:'W2', hint:'ширина ската 2, м' },
+      { key:'W3', label:'W3', hint:'ширина конька, м' },
       { key:'H1', label:'H1', hint:'длина бокового ската, м'    },
       { key:'H2', label:'H2', hint:'длина торцевого ската, м'   },
     ],
@@ -2000,9 +2000,9 @@ const SHAPES = [
   {
     id:'эркер', label:'С эркером',
     fields:[
-      { key:'W1', label:'W1', hint:'длина здания — осн. длинных скатов, м' },
-      { key:'W2', label:'W2', hint:'ширина здания — осн. торцевых скатов, м' },
-      { key:'Wk', label:'Wk', hint:'длина конька, м'            },
+      { key:'W1', label:'W1', hint:'ширина ската 1, м' },
+      { key:'W2', label:'W2', hint:'ширина ската 2, м' },
+      { key:'W3', label:'W3', hint:'ширина конька, м' },
       { key:'H1', label:'H1', hint:'длина бокового ската, м'    },
       { key:'H2', label:'H2', hint:'длина торцевого ската, м'   },
       { key:'We', label:'We', hint:'ширина эркера, м'           },
@@ -2099,7 +2099,7 @@ function SchemeSVG({ shape }) {
       <SlopeArrow x1={60}  y1={100} x2={26}  y2={100} mid="a3"/>
       <SlopeArrow x1={210} y1={100} x2={234} y2={100} mid="a3"/>
       {/* Подписи */}
-      <text x="132" y="13"  textAnchor="middle" {...tx}>Wk</text>
+      <text x="132" y="13"  textAnchor="middle" {...tx}>W3</text>
       <text x="132" y="96"  textAnchor="middle" {...tx}>W1</text>
       <text x="248" y="55"  textAnchor="start"  {...tx}>H2</text>
       <text x="248" y="148" textAnchor="start"  {...tx}>H2</text>
@@ -2129,7 +2129,7 @@ function SchemeSVG({ shape }) {
       <SlopeArrow x1={188} y1={100} x2={215} y2={100} mid="a4"/>
       <SlopeArrow x1={237} y1={100} x2={266} y2={100} mid="a4"/>
       {/* Подписи основные */}
-      <text x="117" y="13"  textAnchor="middle" {...tx}>Wk</text>
+      <text x="117" y="13"  textAnchor="middle" {...tx}>W3</text>
       <text x="117" y="96"  textAnchor="middle" {...tx}>W1</text>
       <text x="8"   y="104" textAnchor="end"    {...tx}>H1</text>
       <text x="117" y="200" textAnchor="middle" {...tx}>W2</text>
@@ -2160,7 +2160,7 @@ function calcArea(shape, dims) {
     // Два боковых ската (трапеции): (Wk + W2) / 2 × H1 × 2 = (Wk + W2) × H1
     // Два торцевых вальма (треугольники): W1/2 × H2 × 2 = W1 × H2
     // 2 длинных боковых ската (трапеции): (Wk + W1) × H1
-    const боковые  = (n('Wk') + n('W1')) * n('H1');
+    const боковые  = (n('W3') + n('W1')) * n('H1');
     // 2 торцевых ската (треугольники): W2 × H2
     const торцевые = n('W2') * n('H2');
     return боковые + торцевые;
@@ -2168,7 +2168,7 @@ function calcArea(shape, dims) {
 
   if (shape === 'эркер') {
     // Вальмовая + скат эркера
-    const боковые  = (n('Wk') + n('W1')) * n('H1');
+    const боковые  = (n('W3') + n('W1')) * n('H1');
     const торцевые = n('W2') * n('H2');
     const эркер    = n('We') * n('He');
     return боковые + торцевые + эркер;
