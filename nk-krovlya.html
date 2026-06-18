@@ -2466,57 +2466,56 @@ function Calculator() {
         </div>
         )}
 
-        {shape !== 'сложная' && (<div className="calc-row">
-          <div className="cfg-size-input"><label>Высота крыши, м <span style={{color:'var(--fg-soft)',fontWeight:400}}>(для информации, макс. 10 м)</span></label>
-            <input type="number" min="0" max="10" step="0.1" value={height}
-              onChange={e=>setHeight(Math.min(10, parseFloat(e.target.value)||0) || '')} placeholder="0"/>
-          </div>
-        </div>)}
+        {shape !== 'сложная' && (
+          <>
+            {/* 4. Высота крыши */}
+            <div className="calc-row">
+              <div className="cfg-size-input">
+                <label>Высота крыши, м <span style={{color:'var(--fg-soft)',fontWeight:400}}>(для информации, макс. 10 м)</span></label>
+                <input type="number" min="0" max="10" step="0.1" value={height}
+                  onChange={e=>setHeight(Math.min(10, parseFloat(e.target.value)||0) || '')} placeholder="0"/>
+              </div>
+            </div>
 
-        {shape !== 'сложная' && (<div className="calc-row">
-        {/* 5. Карнизный свес */}
-        <div className="calc-row">
-          <div className="cfg-size-input">
-            <label>Вынос карнизного свеса, см</label>
-            <input type="number" min="0" step="5" value={eaves}
-              onChange={e=>setEaves(e.target.value)} placeholder="50"/>
-          </div>
-          <div style={{fontSize:12,color:'var(--fg-soft)',marginTop:4}}>
-            Добавляет площадь по периметру: периметр × свес(м)
-          </div>
-        </div>)}
+            {/* 5. Карнизный свес */}
+            <div className="calc-row">
+              <div className="cfg-size-input">
+                <label>Вынос карнизного свеса, см</label>
+                <input type="number" min="0" step="5" value={eaves}
+                  onChange={e=>setEaves(e.target.value)} placeholder="50"/>
+              </div>
+              <div style={{fontSize:12,color:'var(--fg-soft)',marginTop:4}}>
+                Добавляет площадь по периметру: периметр × свес(м)
+              </div>
+            </div>
 
-        {shape !== 'сложная' && (<div className="calc-row">
-        {/* 6. Водосток */}
-        <div className="calc-row">
-          <div className="calc-row-head">
-            <span className="h" style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.05em',textTransform:'uppercase',color:'var(--fg-soft)'}}>
-              Сливы / водосток ({GUTTER_PRICE} ₽/пог.м)
-            </span>
-          </div>
-          <div className="calc-gutters-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:8}}>
-            {GUTTER_SIDES.map(s => {
-              const on = gutters.includes(s.id);
-              return (
-                <button key={s.id}
-                  className={'cfg-option'+(on?' active':'')}
-                  onClick={()=>toggleGutter(s.id)}
-                  style={{flexDirection:'row',gap:8,padding:'10px 12px',justifyContent:'flex-start'}}
-                >
-                  <span style={{
-                    width:14,height:14,borderRadius:3,border:'1.5px solid currentColor',
-                    display:'grid',placeItems:'center',flexShrink:0
-                  }}>
-                    {on && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
-                      <path d="M4 12l5 5 11-11"/>
-                    </svg>}
-                  </span>
-                  <span className="lab" style={{fontFamily:'var(--font-mono)',fontSize:11}}>{s.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>)}
+            {/* 6. Водосток */}
+            <div className="calc-row">
+              <div className="calc-row-head">
+                <span className="h" style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.05em',textTransform:'uppercase',color:'var(--fg-soft)'}}>
+                  Сливы / водосток ({GUTTER_PRICE} ₽/пог.м)
+                </span>
+              </div>
+              <div className="calc-gutters-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:8}}>
+                {GUTTER_SIDES.map(s => {
+                  const on = gutters.includes(s.id);
+                  return (
+                    <button key={s.id}
+                      className={'cfg-option'+(on?' active':'')}
+                      onClick={()=>toggleGutter(s.id)}
+                      style={{flexDirection:'row',gap:8,padding:'10px 12px',justifyContent:'flex-start'}}
+                    >
+                      <span style={{width:14,height:14,borderRadius:3,border:'1.5px solid currentColor',display:'grid',placeItems:'center',flexShrink:0}}>
+                        {on && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"><path d="M4 12l5 5 11-11"/></svg>}
+                      </span>
+                      <span className="lab" style={{fontFamily:'var(--font-mono)',fontSize:11}}>{s.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
 
       </div>
 
