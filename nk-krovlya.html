@@ -2321,12 +2321,12 @@ function Calculator() {
           </div>
         </div>
 
-        {/* 4. Высота конька */}
+        {/* 4. Высота крыши */}
         <div className="calc-row">
           <div className="cfg-size-input">
-            <label>Высота конька, м <span style={{color:'var(--fg-soft)',fontWeight:400}}>(для информации)</span></label>
-            <input type="number" min="0" step="0.1" value={height}
-              onChange={e=>setHeight(e.target.value)} placeholder="0"/>
+            <label>Высота крыши, м <span style={{color:'var(--fg-soft)',fontWeight:400}}>(для информации, макс. 10 м)</span></label>
+            <input type="number" min="0" max="10" step="0.1" value={height}
+              onChange={e=>setHeight(Math.min(10, parseFloat(e.target.value)||0) || '')} placeholder="0"/>
           </div>
         </div>
 
