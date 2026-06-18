@@ -1990,8 +1990,8 @@ const SHAPES = [
   {
     id:'вальмовая', label:'Четырёхскатная',
     fields:[
-      { key:'W1', label:'W1', hint:'ширина бокового ската, м'  },
-      { key:'W2', label:'W2', hint:'ширина торцевого ската, м'  },
+      { key:'W1', label:'W1', hint:'длина здания — осн. длинных скатов, м' },
+      { key:'W2', label:'W2', hint:'ширина здания — осн. торцевых скатов, м' },
       { key:'Wk', label:'Wk', hint:'длина конька, м'            },
       { key:'H1', label:'H1', hint:'длина бокового ската, м'    },
       { key:'H2', label:'H2', hint:'длина торцевого ската, м'   },
@@ -2000,8 +2000,8 @@ const SHAPES = [
   {
     id:'эркер', label:'С эркером',
     fields:[
-      { key:'W1', label:'W1', hint:'ширина бокового ската, м'  },
-      { key:'W2', label:'W2', hint:'ширина торцевого ската, м'  },
+      { key:'W1', label:'W1', hint:'длина здания — осн. длинных скатов, м' },
+      { key:'W2', label:'W2', hint:'ширина здания — осн. торцевых скатов, м' },
       { key:'Wk', label:'Wk', hint:'длина конька, м'            },
       { key:'H1', label:'H1', hint:'длина бокового ската, м'    },
       { key:'H2', label:'H2', hint:'длина торцевого ската, м'   },
@@ -2083,64 +2083,81 @@ function SchemeSVG({ shape }) {
   );
 
   if (shape === 'вальмовая') return (
-    <svg viewBox="0 0 270 200" width="100%" style={{maxHeight:200}}>
+    // W1 = длина здания (основание длинных боковых скатов, горизонталь)
+    // W2 = ширина здания (основание торцевых скатов, вертикаль)
+    // H1 — уклон длинных скатов (стрелки вверх/вниз от конька)
+    // H2 — уклон торцевых скатов (стрелки влево/вправо от торцов конька)
+    <svg viewBox="0 0 300 210" width="100%" style={{maxHeight:210}}>
       <Marker id="a3"/>
-      <rect x="20" y="20" width="220" height="160" fill={bg} {...st}/>
-      {/* Конёк */}
-      <line x1="80" y1="100" x2="185" y2="100" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
-      {/* Вальмовые рёбра */}
-      <line x1="80"  y1="100" x2="20"  y2="20"  {...st} strokeWidth={1.2}/>
-      <line x1="80"  y1="100" x2="20"  y2="180" {...st} strokeWidth={1.2}/>
-      <line x1="185" y1="100" x2="240" y2="20"  {...st} strokeWidth={1.2}/>
-      <line x1="185" y1="100" x2="240" y2="180" {...st} strokeWidth={1.2}/>
-      {/* Стрелки уклона: 4 ската */}
-      {/* Верхний треугольник — вверх */}
-      <SlopeArrow x1={132} y1={82}  x2={132} y2={40}  mid="a3"/>
-      {/* Нижний треугольник — вниз */}
-      <SlopeArrow x1={132} y1={118} x2={132} y2={162} mid="a3"/>
-      {/* Левый скат — влево */}
-      <SlopeArrow x1={60}  y1={100} x2={26}  y2={100} mid="a3"/>
-      {/* Правый скат — вправо */}
-      <SlopeArrow x1={210} y1={100} x2={234} y2={100} mid="a3"/>
-      {/* Подписи */}
-      <text x="132" y="13"  textAnchor="middle" {...tx}>Wk</text>
-      <text x="132" y="96"  textAnchor="middle" {...tx}>W1</text>
-      <text x="248" y="55"  textAnchor="start"  {...tx}>H2</text>
-      <text x="248" y="148" textAnchor="start"  {...tx}>H2</text>
-      <text x="8"   y="104" textAnchor="end"    {...tx}>H1</text>
-      <text x="132" y="196" textAnchor="middle" {...tx}>W2</text>
+      {/* Здание — горизонтальный прямоугольник: W1 > W2 */}
+      <rect x="30" y="30" width="210" height="130" fill={bg} {...st}/>
+      {/* Конёк — горизонталь, по центру, короче W1 */}
+      <line x1="90" y1="95" x2="180" y2="95" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      {/* Рёбра к углам */}
+      <line x1="90"  y1="95" x2="30"  y2="30"  {...st} strokeWidth={1.2}/>
+      <line x1="90"  y1="95" x2="30"  y2="160" {...st} strokeWidth={1.2}/>
+      <line x1="180" y1="95" x2="240" y2="30"  {...st} strokeWidth={1.2}/>
+      <line x1="180" y1="95" x2="240" y2="160" {...st} strokeWidth={1.2}/>
+      {/* H1 — стрелки длинных боковых скатов: вверх и вниз от конька */}
+      <SlopeArrow x1={135} y1={80}  x2={135} y2={40}  mid="a3"/>
+      <SlopeArrow x1={135} y1={110} x2={135} y2={150} mid="a3"/>
+      {/* H2 — стрелки торцевых скатов: влево и вправо от торцов конька */}
+      <SlopeArrow x1={78}  y1={95}  x2={40}  y2={95}  mid="a3"/>
+      <SlopeArrow x1={192} y1={95}  x2={232} y2={95}  mid="a3"/>
+      {/* Wk — размерная линия над коньком */}
+      <line x1="90" y1="22" x2="180" y2="22" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <text x="135" y="18" textAnchor="middle" {...tx}>Wk</text>
+      {/* W1 — длина здания, подпись снизу */}
+      <line x1="30" y1="172" x2="240" y2="172" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <text x="135" y="185" textAnchor="middle" {...tx}>W1 (длина)</text>
+      {/* W2 — ширина здания, подпись справа */}
+      <line x1="252" y1="30" x2="252" y2="160" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <text x="258" y="98" textAnchor="start" {...tx}>W2</text>
+      {/* H1 — подпись у стрелки */}
+      <text x="140" y="65" textAnchor="start" {...tx}>H1</text>
+      {/* H2 — подпись у стрелки */}
+      <text x="55" y="89" textAnchor="middle" {...tx}>H2</text>
     </svg>
   );
 
   if (shape === 'эркер') return (
-    <svg viewBox="0 0 310 210" width="100%" style={{maxHeight:210}}>
+    // Та же логика что вальмовая + выступ-эркер справа
+    <svg viewBox="0 0 340 210" width="100%" style={{maxHeight:210}}>
       <Marker id="a4"/>
       {/* Основное здание */}
-      <rect x="20" y="20" width="200" height="160" fill={bg} {...st}/>
+      <rect x="30" y="30" width="200" height="130" fill={bg} {...st}/>
       {/* Конёк */}
-      <line x1="70" y1="100" x2="165" y2="100" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
-      {/* Вальмовые рёбра */}
-      <line x1="70"  y1="100" x2="20"  y2="20"  {...st} strokeWidth={1.2}/>
-      <line x1="70"  y1="100" x2="20"  y2="180" {...st} strokeWidth={1.2}/>
-      <line x1="165" y1="100" x2="220" y2="20"  {...st} strokeWidth={1.2}/>
-      <line x1="165" y1="100" x2="220" y2="180" {...st} strokeWidth={1.2}/>
+      <line x1="85" y1="95" x2="170" y2="95" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      {/* Рёбра к углам */}
+      <line x1="85"  y1="95" x2="30"  y2="30"  {...st} strokeWidth={1.2}/>
+      <line x1="85"  y1="95" x2="30"  y2="160" {...st} strokeWidth={1.2}/>
+      <line x1="170" y1="95" x2="230" y2="30"  {...st} strokeWidth={1.2}/>
+      <line x1="170" y1="95" x2="230" y2="160" {...st} strokeWidth={1.2}/>
       {/* Эркер */}
-      <rect x="220" y="70" width="55" height="60" fill={bg} stroke={acc} strokeWidth={1.5} strokeDasharray="4 3"/>
-      {/* Стрелки уклона: основная крыша — 4 направления */}
-      <SlopeArrow x1={117} y1={82}  x2={117} y2={42}  mid="a4"/>
-      <SlopeArrow x1={117} y1={118} x2={117} y2={160} mid="a4"/>
-      <SlopeArrow x1={52}  y1={100} x2={26}  y2={100} mid="a4"/>
-      <SlopeArrow x1={188} y1={100} x2={215} y2={100} mid="a4"/>
-      {/* Стрелка уклона эркера — вправо */}
-      <SlopeArrow x1={237} y1={100} x2={266} y2={100} mid="a4"/>
-      {/* Подписи основные */}
-      <text x="117" y="13"  textAnchor="middle" {...tx}>Wk</text>
-      <text x="117" y="96"  textAnchor="middle" {...tx}>W1</text>
-      <text x="8"   y="104" textAnchor="end"    {...tx}>H1</text>
-      <text x="117" y="200" textAnchor="middle" {...tx}>W2</text>
+      <rect x="230" y="68" width="55" height="55" fill={bg} stroke={acc} strokeWidth={1.5} strokeDasharray="4 3"/>
+      {/* H1 — стрелки боковых скатов: вверх и вниз */}
+      <SlopeArrow x1={127} y1={80}  x2={127} y2={42}  mid="a4"/>
+      <SlopeArrow x1={127} y1={110} x2={127} y2={150} mid="a4"/>
+      {/* H2 — стрелки торцевых скатов: влево и вправо */}
+      <SlopeArrow x1={73}  y1={95}  x2={40}  y2={95}  mid="a4"/>
+      <SlopeArrow x1={182} y1={95}  x2={222} y2={95}  mid="a4"/>
+      {/* Стрелка ската эркера — вправо */}
+      <SlopeArrow x1={248} y1={95}  x2={278} y2={95}  mid="a4"/>
+      {/* Wk — над коньком */}
+      <line x1="85" y1="22" x2="170" y2="22" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <text x="127" y="17" textAnchor="middle" {...tx}>Wk</text>
+      {/* W1 — длина здания снизу */}
+      <line x1="30" y1="172" x2="230" y2="172" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <text x="130" y="184" textAnchor="middle" {...tx}>W1 (длина)</text>
+      {/* W2 — ширина здания справа от эркера */}
+      <line x1="295" y1="30" x2="295" y2="160" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <text x="300" y="98" textAnchor="start" {...tx}>W2</text>
+      {/* H1 / H2 подписи */}
+      <text x="132" y="65" textAnchor="start" {...tx}>H1</text>
+      <text x="52"  y="88" textAnchor="middle" {...tx}>H2</text>
       {/* Подписи эркера */}
-      <text x="247" y="64"  textAnchor="middle" {...tx}>We</text>
-      <text x="282" y="96"  textAnchor="start"  {...tx}>He</text>
+      <text x="257" y="62" textAnchor="middle" {...tx}>We</text>
+      <text x="292" y="97" textAnchor="start"  {...tx}>He</text>
     </svg>
   );
 
@@ -2164,15 +2181,17 @@ function calcArea(shape, dims) {
   if (shape === 'вальмовая') {
     // Два боковых ската (трапеции): (Wk + W2) / 2 × H1 × 2 = (Wk + W2) × H1
     // Два торцевых вальма (треугольники): W1/2 × H2 × 2 = W1 × H2
-    const боковые  = (n('Wk') + n('W2')) * n('H1');
-    const торцевые = n('W1') * n('H2');
+    // 2 длинных боковых ската (трапеции): (Wk + W1) × H1
+    const боковые  = (n('Wk') + n('W1')) * n('H1');
+    // 2 торцевых ската (треугольники): W2 × H2
+    const торцевые = n('W2') * n('H2');
     return боковые + торцевые;
   }
 
   if (shape === 'эркер') {
     // Вальмовая + скат эркера
-    const боковые  = (n('Wk') + n('W2')) * n('H1');
-    const торцевые = n('W1') * n('H2');
+    const боковые  = (n('Wk') + n('W1')) * n('H1');
+    const торцевые = n('W2') * n('H2');
     const эркер    = n('We') * n('He');
     return боковые + торцевые + эркер;
   }
@@ -2202,7 +2221,7 @@ function calcGutterLen(sides, shape, dims) {
     ? { front: n('W'), back: n('W'), left: n('H'), right: n('H') }
     : shape === 'двускатная'
     ? { front: n('W'), back: n('W'), left: n('H1'), right: n('H2') }
-    : { front: n('W2'), back: n('W2'), left: n('W1'), right: n('W1') };
+    : { front: n('W1'), back: n('W1'), left: n('W2'), right: n('W2') };
   return sides.reduce((s, id) => s + (lens[id] || 0), 0);
 }
 
