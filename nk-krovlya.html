@@ -2083,83 +2083,73 @@ function SchemeSVG({ shape }) {
   );
 
   if (shape === 'вальмовая') return (
-    <svg viewBox="0 0 290 215" width="100%" style={{maxHeight:215}}>
+    <svg viewBox="0 0 290 200" width="100%" style={{maxHeight:200}}>
       <Marker id="a3"/>
       {/* Здание */}
-      <rect x="30" y="25" width="210" height="155" fill={bg} {...st}/>
-      {/* Конёк — пунктир по центру */}
-      <line x1="90" y1="103" x2="180" y2="103" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      <rect x="20" y="20" width="220" height="155" fill={bg} {...st}/>
+      {/* Конёк — пунктир, это W3 */}
+      <line x1="78" y1="98" x2="182" y2="98" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      {/* W3 — прямо на пунктирной линии конька */}
+      <text x="130" y="94" textAnchor="middle" {...tx}>W3</text>
+
       {/* Вальмовые рёбра к углам */}
-      <line x1="90"  y1="103" x2="30"  y2="25"  {...st} strokeWidth={1.2}/>
-      <line x1="90"  y1="103" x2="30"  y2="180" {...st} strokeWidth={1.2}/>
-      <line x1="180" y1="103" x2="240" y2="25"  {...st} strokeWidth={1.2}/>
-      <line x1="180" y1="103" x2="240" y2="180" {...st} strokeWidth={1.2}/>
+      <line x1="78"  y1="98" x2="20"  y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="78"  y1="98" x2="20"  y2="175" {...st} strokeWidth={1.2}/>
+      <line x1="182" y1="98" x2="240" y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="182" y1="98" x2="240" y2="175" {...st} strokeWidth={1.2}/>
+
       {/* Стрелки уклона: 4 ската */}
-      <SlopeArrow x1={135} y1={87}  x2={135} y2={48}  mid="a3"/>
-      <SlopeArrow x1={135} y1={119} x2={135} y2={162} mid="a3"/>
-      <SlopeArrow x1={72}  y1={103} x2={40}  y2={103} mid="a3"/>
-      <SlopeArrow x1={198} y1={103} x2={232} y2={103} mid="a3"/>
+      <SlopeArrow x1={130} y1={82}  x2={130} y2={44}  mid="a3"/>
+      <SlopeArrow x1={130} y1={114} x2={130} y2={158} mid="a3"/>
+      <SlopeArrow x1={62}  y1={98}  x2={32}  y2={98}  mid="a3"/>
+      <SlopeArrow x1={198} y1={98}  x2={228} y2={98}  mid="a3"/>
 
-      {/* ── H1: перпендикуляр от конька до нижнего карниза с прямым углом ── */}
-      <line x1="135" y1="103" x2="135" y2="180" stroke={acc} strokeWidth={1.5} strokeDasharray="3 2"/>
-      {/* Прямой угол в точке (135, 180) */}
-      <path d="M135,170 L125,170 L125,180" fill="none" stroke={acc} strokeWidth={1.2}/>
-      {/* Подпись H1 рядом с перпендикуляром */}
-      <text x="140" y="148" textAnchor="start" {...tx}>H1</text>
+      {/* H1: перпендикуляр от конька до нижнего карниза */}
+      <line x1="130" y1="98" x2="130" y2="175" stroke={acc} strokeWidth={1.5} strokeDasharray="3 2"/>
+      <path d="M130,165 L120,165 L120,175" fill="none" stroke={acc} strokeWidth={1.2}/>
+      <text x="135" y="143" textAnchor="start" {...tx}>H1</text>
 
-      {/* W1 — ширина ската 1 (верхний торец, над левым вальмовым треугольником) */}
-      <line x1="30" y1="16" x2="90" y2="16" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
-      <text x="60" y="12" textAnchor="middle" {...tx}>W1</text>
+      {/* W1 — только сверху, на верхней линии здания */}
+      <text x="130" y="16" textAnchor="middle" {...tx}>W1</text>
 
-      {/* W3 — ширина конька (над коньком) */}
-      <line x1="90" y1="16" x2="180" y2="16" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
-      <text x="135" y="12" textAnchor="middle" {...tx}>W3</text>
-
-      {/* W2 — ширина ската 2 (правый торец) */}
-      <line x1="180" y1="16" x2="240" y2="16" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
-      <text x="210" y="12" textAnchor="middle" {...tx}>W2</text>
+      {/* W2 — справа, на правой вертикальной линии здания */}
+      <text x="248" y="100" textAnchor="start" {...tx}>W2</text>
     </svg>
   );
 
   if (shape === 'эркер') return (
-    <svg viewBox="0 0 330 220" width="100%" style={{maxHeight:220}}>
+    <svg viewBox="0 0 320 215" width="100%" style={{maxHeight:215}}>
       <Marker id="a4"/>
       {/* Основное здание */}
-      <rect x="30" y="25" width="190" height="155" fill={bg} {...st}/>
-      {/* Конёк */}
-      <line x1="82" y1="103" x2="162" y2="103" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      <rect x="20" y="20" width="190" height="155" fill={bg} {...st}/>
+      {/* Конёк — пунктир, W3 */}
+      <line x1="72" y1="98" x2="158" y2="98" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      {/* W3 — на пунктирной линии конька */}
+      <text x="115" y="94" textAnchor="middle" {...tx}>W3</text>
       {/* Вальмовые рёбра */}
-      <line x1="82"  y1="103" x2="30"  y2="25"  {...st} strokeWidth={1.2}/>
-      <line x1="82"  y1="103" x2="30"  y2="180" {...st} strokeWidth={1.2}/>
-      <line x1="162" y1="103" x2="220" y2="25"  {...st} strokeWidth={1.2}/>
-      <line x1="162" y1="103" x2="220" y2="180" {...st} strokeWidth={1.2}/>
+      <line x1="72"  y1="98" x2="20"  y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="72"  y1="98" x2="20"  y2="175" {...st} strokeWidth={1.2}/>
+      <line x1="158" y1="98" x2="210" y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="158" y1="98" x2="210" y2="175" {...st} strokeWidth={1.2}/>
       {/* Эркер */}
-      <rect x="220" y="73" width="55" height="55" fill={bg} stroke={acc} strokeWidth={1.5} strokeDasharray="4 3"/>
+      <rect x="210" y="70" width="52" height="57" fill={bg} stroke={acc} strokeWidth={1.5} strokeDasharray="4 3"/>
       {/* Стрелки уклона */}
-      <SlopeArrow x1={122} y1={87}  x2={122} y2={48}  mid="a4"/>
-      <SlopeArrow x1={122} y1={119} x2={122} y2={162} mid="a4"/>
-      <SlopeArrow x1={68}  y1={103} x2={40}  y2={103} mid="a4"/>
-      <SlopeArrow x1={176} y1={103} x2={212} y2={103} mid="a4"/>
-      <SlopeArrow x1={236} y1={100} x2={265} y2={100} mid="a4"/>
-
-      {/* H1: перпендикуляр от конька до нижнего карниза с прямым углом */}
-      <line x1="122" y1="103" x2="122" y2="180" stroke={acc} strokeWidth={1.5} strokeDasharray="3 2"/>
-      <path d="M122,170 L112,170 L112,180" fill="none" stroke={acc} strokeWidth={1.2}/>
-      <text x="127" y="148" textAnchor="start" {...tx}>H1</text>
-
-      {/* W1 — левый торец */}
-      <line x1="30" y1="16" x2="82" y2="16" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
-      <text x="56" y="12" textAnchor="middle" {...tx}>W1</text>
-      {/* W3 — конёк */}
-      <line x1="82" y1="16" x2="162" y2="16" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
-      <text x="122" y="12" textAnchor="middle" {...tx}>W3</text>
-      {/* W2 — правый торец */}
-      <line x1="162" y1="16" x2="220" y2="16" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
-      <text x="191" y="12" textAnchor="middle" {...tx}>W2</text>
-
+      <SlopeArrow x1={115} y1={82}  x2={115} y2={44}  mid="a4"/>
+      <SlopeArrow x1={115} y1={114} x2={115} y2={157} mid="a4"/>
+      <SlopeArrow x1={57}  y1={98}  x2={30}  y2={98}  mid="a4"/>
+      <SlopeArrow x1={173} y1={98}  x2={203} y2={98}  mid="a4"/>
+      <SlopeArrow x1={228} y1={98}  x2={254} y2={98}  mid="a4"/>
+      {/* H1: перпендикуляр с прямым углом */}
+      <line x1="115" y1="98" x2="115" y2="175" stroke={acc} strokeWidth={1.5} strokeDasharray="3 2"/>
+      <path d="M115,165 L105,165 L105,175" fill="none" stroke={acc} strokeWidth={1.2}/>
+      <text x="120" y="143" textAnchor="start" {...tx}>H1</text>
+      {/* W1 — только сверху */}
+      <text x="115" y="14" textAnchor="middle" {...tx}>W1</text>
+      {/* W2 — справа на вертикальном крае */}
+      <text x="218" y="100" textAnchor="start" {...tx}>W2</text>
       {/* Подписи эркера */}
-      <text x="247" y="67" textAnchor="middle" {...tx}>We</text>
-      <text x="283" y="103" textAnchor="start" {...tx}>He</text>
+      <text x="236" y="65" textAnchor="middle" {...tx}>We</text>
+      <text x="270" y="100" textAnchor="start" {...tx}>He</text>
     </svg>
   );
 
