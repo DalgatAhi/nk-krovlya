@@ -1176,6 +1176,15 @@ input, select, textarea { font-family: inherit; }
   .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
 }
 
+/* ── Калькулятор: схема + поля на мобиле ── */
+@media (max-width: 860px) {
+  .calc { grid-template-columns: 1fr !important; padding: 28px; }
+}
+@media (max-width: 600px) {
+  .calc-scheme-grid { grid-template-columns: 1fr !important; }
+  .calc-gutters-grid { grid-template-columns: 1fr !important; }
+}
+
 /* ── 560px ── */
 @media (max-width: 560px) {
   .container { padding: 0 16px; }
@@ -1948,120 +1957,465 @@ function ProcessSection() {
 window.ProcessSection = ProcessSection;
 
 /* ── Calculator ── */
-const CTYPES = [
-  { id:"metal", label:"Металлочерепица", sub:"~750 ₽/м²",  mat:750,  work:500 },
-  { id:"prof",  label:"Профнастил",      sub:"~550 ₽/м²",  mat:550,  work:400 },
-  { id:"falc",  label:"Фальцевая",       sub:"~1400 ₽/м²", mat:1400, work:800 },
-];
-const PITCHES = [
-  { id:15, label:"15°", sub:"пологая",     coeff:1.04 },
-  { id:30, label:"30°", sub:"стандартная", coeff:1.16 },
-  { id:45, label:"45°", sub:"крутая",      coeff:1.41 },
+
+// ─── Константы цен (редактировать только здесь) ───────────────────────────
+const PRICES      = { metalcherepica: 750, profnastil: 550, falcevaya: 1400 };
+const WORK_PRICE  = 600;   // ₽/м² — стоимость монтажных работ
+const GUTTER_PRICE = 850;  // ₽/пог.м — стоимость водосточной системы
+
+// ─── Типы покрытия ─────────────────────────────────────────────────────────
+const COVERINGS = [
+  { id:'metalcherepica', label:'Металлочерепица', sub:'750 ₽/м²'   },
+  { id:'profnastil',     label:'Профнастил',      sub:'550 ₽/м²'   },
+  { id:'falcevaya',      label:'Фальцевая',        sub:'1 400 ₽/м²' },
 ];
 
+// ─── Формы крыши: id, название, поля размеров ──────────────────────────────
+const SHAPES = [
+  {
+    id:'односкатная', label:'Односкатная',
+    fields:[
+      { key:'W',  label:'W',  hint:'ширина ската, м' },
+      { key:'H',  label:'H',  hint:'длина ската, м'  },
+    ],
+  },
+  {
+    id:'двускатная', label:'Двускатная',
+    fields:[
+      { key:'W',  label:'W',  hint:'ширина дома, м'        },
+      { key:'H1', label:'H1', hint:'длина переднего ската, м' },
+      { key:'H2', label:'H2', hint:'длина заднего ската, м'   },
+    ],
+  },
+  {
+    id:'вальмовая', label:'Четырёхскатная',
+    fields:[
+      { key:'W1', label:'W1', hint:'ширина бокового ската, м'  },
+      { key:'W2', label:'W2', hint:'ширина торцевого ската, м'  },
+      { key:'Wk', label:'Wk', hint:'длина конька, м'            },
+      { key:'H1', label:'H1', hint:'длина бокового ската, м'    },
+      { key:'H2', label:'H2', hint:'длина торцевого ската, м'   },
+    ],
+  },
+  {
+    id:'эркер', label:'С эркером',
+    fields:[
+      { key:'W1', label:'W1', hint:'ширина бокового ската, м'  },
+      { key:'W2', label:'W2', hint:'ширина торцевого ската, м'  },
+      { key:'Wk', label:'Wk', hint:'длина конька, м'            },
+      { key:'H1', label:'H1', hint:'длина бокового ската, м'    },
+      { key:'H2', label:'H2', hint:'длина торцевого ската, м'   },
+      { key:'We', label:'We', hint:'ширина эркера, м'           },
+      { key:'He', label:'He', hint:'длина ската эркера, м'      },
+    ],
+  },
+];
+
+// ─── Стороны для водостока ─────────────────────────────────────────────────
+const GUTTER_SIDES = [
+  { id:'front', label:'Передний скат' },
+  { id:'back',  label:'Задний скат'   },
+  { id:'left',  label:'Левая сторона' },
+  { id:'right', label:'Правая сторона'},
+];
+
+// ─── SVG-схемы кровли (вид сверху) ────────────────────────────────────────
+function SchemeSVG({ shape }) {
+  const lc  = '#374151';
+  const acc = 'var(--accent)';
+  const bg  = 'var(--bg-sunken)';
+  const st  = { stroke:lc, strokeWidth:1.5, fill:'none' };
+  const tx  = { fontSize:11, fontFamily:'var(--font-mono)', fill:acc, fontWeight:'600' };
+  const txN = { fontSize:10, fontFamily:'var(--font-mono)', fill:lc };
+  const dd  = '5 4';
+
+  if (shape === 'односкатная') return (
+    <svg viewBox="0 0 220 170" width="100%" style={{maxHeight:170}}>
+      <defs>
+        <marker id="arr" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill={acc}/>
+        </marker>
+      </defs>
+      {/* Прямоугольник ската */}
+      <rect x="20" y="30" width="180" height="110" fill={bg} {...st}/>
+      {/* Стрелка уклона */}
+      <line x1="110" y1="65" x2="110" y2="105" stroke={acc} strokeWidth={1.5} markerEnd="url(#arr)"/>
+      <text x="115" y="90" {...txN}>уклон</text>
+      {/* Размерные линии */}
+      <line x1="20" y1="22" x2="200" y2="22" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <line x1="208" y1="30" x2="208" y2="140" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      {/* Подписи */}
+      <text x="110" y="18" textAnchor="middle" {...tx}>W</text>
+      <text x="216" y="90" textAnchor="start"  {...tx}>H</text>
+    </svg>
+  );
+
+  if (shape === 'двускатная') return (
+    <svg viewBox="0 0 220 190" width="100%" style={{maxHeight:190}}>
+      {/* Прямоугольник */}
+      <rect x="20" y="20" width="180" height="150" fill={bg} {...st}/>
+      {/* Конёк — пунктир по центру */}
+      <line x1="20" y1="95" x2="200" y2="95" stroke={lc} strokeWidth={1.5} strokeDasharray={dd}/>
+      {/* Размерные линии */}
+      <line x1="20" y1="12" x2="200" y2="12" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <line x1="208" y1="20" x2="208" y2="95" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      <line x1="208" y1="95" x2="208" y2="170" stroke={acc} strokeWidth={1} strokeDasharray="3 2"/>
+      {/* Подписи */}
+      <text x="110" y="9"   textAnchor="middle" {...tx}>W</text>
+      <text x="215" y="60"  textAnchor="start"  {...tx}>H1</text>
+      <text x="215" y="135" textAnchor="start"  {...tx}>H2</text>
+    </svg>
+  );
+
+  if (shape === 'вальмовая') return (
+    <svg viewBox="0 0 260 190" width="100%" style={{maxHeight:190}}>
+      {/* Прямоугольник здания */}
+      <rect x="20" y="20" width="220" height="150" fill={bg} {...st}/>
+      {/* Конёк — короче здания, по центру */}
+      <line x1="75" y1="95" x2="185" y2="95" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      {/* Вальмовые рёбра к углам */}
+      <line x1="75"  y1="95" x2="20"  y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="75"  y1="95" x2="20"  y2="170" {...st} strokeWidth={1.2}/>
+      <line x1="185" y1="95" x2="240" y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="185" y1="95" x2="240" y2="170" {...st} strokeWidth={1.2}/>
+      {/* Подписи */}
+      <text x="130" y="13"  textAnchor="middle" {...tx}>Wk</text>
+      <text x="130" y="90"  textAnchor="middle" {...tx}>W1</text>
+      <text x="248" y="55"  textAnchor="start"  {...tx}>H2</text>
+      <text x="248" y="140" textAnchor="start"  {...tx}>H2</text>
+      <text x="8"   y="99"  textAnchor="end"    {...tx}>H1</text>
+      <text x="130" y="184" textAnchor="middle" {...tx}>W2</text>
+    </svg>
+  );
+
+  if (shape === 'эркер') return (
+    <svg viewBox="0 0 300 210" width="100%" style={{maxHeight:210}}>
+      {/* Основное здание */}
+      <rect x="20" y="20" width="200" height="150" fill={bg} {...st}/>
+      {/* Конёк */}
+      <line x1="65" y1="95" x2="155" y2="95" stroke={lc} strokeWidth={2} strokeDasharray={dd}/>
+      {/* Вальмовые рёбра */}
+      <line x1="65"  y1="95" x2="20"  y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="65"  y1="95" x2="20"  y2="170" {...st} strokeWidth={1.2}/>
+      <line x1="155" y1="95" x2="220" y2="20"  {...st} strokeWidth={1.2}/>
+      <line x1="155" y1="95" x2="220" y2="170" {...st} strokeWidth={1.2}/>
+      {/* Эркер */}
+      <rect x="220" y="65" width="55" height="60" fill={bg} stroke={acc} strokeWidth={1.5} strokeDasharray="4 3"/>
+      {/* Подписи основные */}
+      <text x="120" y="13"  textAnchor="middle" {...tx}>Wk</text>
+      <text x="120" y="90"  textAnchor="middle" {...tx}>W1</text>
+      <text x="8"   y="99"  textAnchor="end"    {...tx}>H1</text>
+      <text x="120" y="195" textAnchor="middle" {...tx}>W2</text>
+      {/* Подписи эркера */}
+      <text x="247" y="59"  textAnchor="middle" {...tx}>We</text>
+      <text x="283" y="98"  textAnchor="start"  {...tx}>He</text>
+    </svg>
+  );
+
+  return null;
+}
+
+// ─── Расчёт площади кровли ─────────────────────────────────────────────────
+function calcArea(shape, dims) {
+  const n = k => parseFloat(dims[k]) || 0;
+
+  if (shape === 'односкатная') {
+    // Площадь = ширина × длина ската
+    return n('W') * n('H');
+  }
+
+  if (shape === 'двускатная') {
+    // Два ската: передний W×H1 + задний W×H2
+    return n('W') * n('H1') + n('W') * n('H2');
+  }
+
+  if (shape === 'вальмовая') {
+    // Два боковых ската (трапеции): (Wk + W2) / 2 × H1 × 2 = (Wk + W2) × H1
+    // Два торцевых вальма (треугольники): W1/2 × H2 × 2 = W1 × H2
+    const боковые  = (n('Wk') + n('W2')) * n('H1');
+    const торцевые = n('W1') * n('H2');
+    return боковые + торцевые;
+  }
+
+  if (shape === 'эркер') {
+    // Вальмовая + скат эркера
+    const боковые  = (n('Wk') + n('W2')) * n('H1');
+    const торцевые = n('W1') * n('H2');
+    const эркер    = n('We') * n('He');
+    return боковые + торцевые + эркер;
+  }
+
+  return 0;
+}
+
+// ─── Расчёт площади карнизного свеса ──────────────────────────────────────
+// Доп. площадь = периметр здания (в плане) × вынос свеса (м)
+function calcEavesArea(shape, dims, eavesCm) {
+  const n     = k => parseFloat(dims[k]) || 0;
+  const свес  = parseFloat(eavesCm) / 100;
+  if (!свес) return 0;
+  let P = 0;
+  if (shape === 'односкатная')               P = 2 * (n('W') + n('H'));
+  else if (shape === 'двускатная')           P = 2 * n('W') + n('H1') + n('H2');
+  else if (shape === 'вальмовая')            P = 2 * (n('W1') + n('W2'));
+  else if (shape === 'эркер')               P = 2 * (n('W1') + n('W2')) + 2 * n('We');
+  return P * свес;
+}
+
+// ─── Расчёт погонных метров водостока по выбранным сторонам ───────────────
+function calcGutterLen(sides, shape, dims) {
+  const n = k => parseFloat(dims[k]) || 0;
+  // Длины сторон в плане по каждой форме
+  const lens = shape === 'односкатная'
+    ? { front: n('W'), back: n('W'), left: n('H'), right: n('H') }
+    : shape === 'двускатная'
+    ? { front: n('W'), back: n('W'), left: n('H1'), right: n('H2') }
+    : { front: n('W2'), back: n('W2'), left: n('W1'), right: n('W1') };
+  return sides.reduce((s, id) => s + (lens[id] || 0), 0);
+}
+
+// ─── Форматирование числа с пробелами-разделителями тысяч ─────────────────
+function fmtNum(n) { return Math.round(n).toLocaleString('ru-RU'); }
+
+// ─── Компонент поля размера ────────────────────────────────────────────────
+function DimInput({ field, value, onChange }) {
+  const v       = value || '';
+  const touched = v !== '';
+  const err     = touched && (parseFloat(v) <= 0 || isNaN(parseFloat(v)));
+  return (
+    <div className="cfg-size-input" style={{
+      borderColor: err ? 'var(--warn)' : undefined,
+      display:'flex', flexDirection:'column', gap:2
+    }}>
+      <label style={{color: err ? 'var(--warn)' : undefined}}>
+        <strong style={{fontFamily:'var(--font-mono)',color:err?'var(--warn)':'var(--accent)'}}>{field.label}</strong>
+        {' '}— {field.hint}
+      </label>
+      <input
+        type="number" min="0.1" step="0.1"
+        value={v}
+        placeholder="0"
+        onChange={e => onChange(field.key, e.target.value)}
+      />
+      {err && (
+        <span style={{fontSize:10,color:'var(--warn)'}}>
+          Поле не может быть пустым и равным 0
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ─── Основной компонент калькулятора ──────────────────────────────────────
 function Calculator() {
-  const [rtype, setRtype] = useStateS("metal");
-  const [pitch, setPitch] = useStateS(30);
-  const [len,   setLen]   = useStateS("");
-  const [wid,   setWid]   = useStateS("");
+  const [covering, setCovering] = useStateS('metalcherepica');
+  const [shape,    setShape   ] = useStateS('двускатная');
+  const [dims,     setDims    ] = useStateS({});
+  const [height,   setHeight  ] = useStateS('');
+  const [eaves,    setEaves   ] = useStateS('50');
+  const [gutters,  setGutters ] = useStateS([]);
 
-  const rt = CTYPES.find(t => t.id === rtype);
-  const pt = PITCHES.find(p => p.id === pitch);
-  const l = parseFloat(len), w = parseFloat(wid);
-  const ok = l > 0 && w > 0 && !isNaN(l) && !isNaN(w);
-  const area = ok ? Math.ceil(l * w * pt.coeff * 1.08) : null;
-  const mat  = area ? area * rt.mat  : null;
-  const wrk  = area ? area * rt.work : null;
-  const tot  = mat && wrk ? mat + wrk : null;
-  const fmt  = n => n.toLocaleString("ru-RU");
+  const shapeConf = SHAPES.find(s => s.id === shape);
+
+  // При смене формы — сбросить размеры
+  function handleShapeChange(id) { setShape(id); setDims({}); }
+
+  function setDim(key, val) { setDims(d => ({...d, [key]: val})); }
+
+  function toggleGutter(id) {
+    setGutters(g => g.includes(id) ? g.filter(x => x !== id) : [...g, id]);
+  }
+
+  // Все поля заполнены и > 0?
+  const allValid = shapeConf.fields.every(f => parseFloat(dims[f.key]) > 0);
+
+  // ── Расчёты ──
+  const baseArea  = allValid ? calcArea(shape, dims)              : null;
+  const eavesArea = allValid ? calcEavesArea(shape, dims, eaves)  : 0;
+  const totalArea = baseArea != null ? baseArea + eavesArea       : null;
+  const gutterLen = allValid ? calcGutterLen(gutters, shape, dims): 0;
+  const matCost   = totalArea != null ? totalArea * PRICES[covering] : null;
+  const gutterCost= gutterLen * GUTTER_PRICE;
+  const workCost  = totalArea != null ? totalArea * WORK_PRICE    : null;
+  const total     = matCost != null   ? matCost + gutterCost + workCost : null;
+
+  // При клике «Получить смету» — передаём данные в форму
+  function handleEstimate(e) {
+    const form = document.querySelector('#contact form');
+    if (form && total) {
+      const set = (name, val) => {
+        let el = form.querySelector(`input[name="${name}"]`);
+        if (!el) { el = document.createElement('input'); el.type='hidden'; el.name=name; form.appendChild(el); }
+        el.value = val;
+      };
+      set('roof_shape',    shape);
+      set('roof_covering', covering);
+      set('roof_area',     totalArea ? fmtNum(totalArea) + ' м²' : '');
+      set('roof_total',    total     ? fmtNum(total) + ' ₽' : '');
+    }
+  }
 
   return (
     <div className="calc">
+
+      {/* ════ ЛЕВАЯ КОЛОНКА — настройки ════ */}
       <div className="calc-inputs">
 
+        {/* 1. Тип покрытия */}
         <div className="calc-row">
           <div className="calc-row-head">
-            <span className="h" style={{fontFamily:"var(--font-mono)",fontSize:11,letterSpacing:"0.05em",textTransform:"uppercase",color:"var(--fg-soft)"}}>Тип покрытия</span>
-            <span className="v">{rt.label}</span>
+            <span className="h" style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.05em',textTransform:'uppercase',color:'var(--fg-soft)'}}>
+              Тип покрытия
+            </span>
           </div>
-          <div className="cfg-options" style={{marginTop:8}}>
-            {CTYPES.map(ct => (
-              <button key={ct.id} className={"cfg-option"+(rtype===ct.id?" active":"")} onClick={()=>setRtype(ct.id)}>
-                <div className="ic"><SvcSVG id={ct.id}/></div>
-                <div className="lab">{ct.label}<small>{ct.sub}</small></div>
+          <div className="cfg-options" style={{marginTop:8,gridTemplateColumns:'repeat(3,1fr)'}}>
+            {COVERINGS.map(c => (
+              <button key={c.id}
+                className={'cfg-option'+(covering===c.id?' active':'')}
+                onClick={()=>setCovering(c.id)}
+              >
+                <div className="lab">{c.label}<small>{c.sub}</small></div>
               </button>
             ))}
           </div>
         </div>
 
+        {/* 2. Форма крыши */}
         <div className="calc-row">
           <div className="calc-row-head">
-            <span className="h" style={{fontFamily:"var(--font-mono)",fontSize:11,letterSpacing:"0.05em",textTransform:"uppercase",color:"var(--fg-soft)"}}>Уклон кровли</span>
-            <span className="v">{pitch}°</span>
+            <span className="h" style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.05em',textTransform:'uppercase',color:'var(--fg-soft)'}}>
+              Форма крыши
+            </span>
           </div>
-          <div className="cfg-options" style={{marginTop:8}}>
-            {PITCHES.map(p => (
-              <button key={p.id} className={"cfg-option"+(pitch===p.id?" active":"")} onClick={()=>setPitch(p.id)}>
-                <div className="ic">
-                  <svg viewBox="0 0 40 32" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    {p.id===15 && <polygon points="2,28 38,28 38,22" fill="var(--bg-elev)"/>}
-                    {p.id===30 && <polygon points="2,28 38,28 38,14" fill="var(--bg-elev)"/>}
-                    {p.id===45 && <polygon points="2,28 38,28 38,4"  fill="var(--bg-elev)"/>}
-                  </svg>
-                </div>
-                <div className="lab">{p.label}<small>{p.sub}</small></div>
+          <div className="cfg-options" style={{marginTop:8,gridTemplateColumns:'repeat(2,1fr)'}}>
+            {SHAPES.map(s => (
+              <button key={s.id}
+                className={'cfg-option'+(shape===s.id?' active':'')}
+                onClick={()=>handleShapeChange(s.id)}
+              >
+                <div className="lab" style={{textAlign:'center'}}>{s.label}</div>
               </button>
             ))}
           </div>
         </div>
 
+        {/* 3. Схема + поля размеров */}
         <div className="calc-row">
           <div className="calc-row-head">
-            <span className="h" style={{fontFamily:"var(--font-mono)",fontSize:11,letterSpacing:"0.05em",textTransform:"uppercase",color:"var(--fg-soft)"}}>Размеры дома</span>
+            <span className="h" style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.05em',textTransform:'uppercase',color:'var(--fg-soft)'}}>
+              Размеры (длины скатов вводятся напрямую, м)
+            </span>
           </div>
-          <div className="cfg-size-row" style={{marginTop:8}}>
-            <div className="cfg-size-input">
-              <label>ДЛИНА (м)</label>
-              <input type="number" min="1" max="200" value={len} onChange={e=>setLen(e.target.value)} placeholder="10"/>
+          <div className="calc-scheme-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginTop:10,alignItems:'start'}}>
+            {/* SVG-схема */}
+            <div style={{background:'var(--bg-sunken)',borderRadius:'var(--r-md)',padding:14,border:'1px solid var(--border)',overflow:'hidden'}}>
+              <SchemeSVG shape={shape}/>
             </div>
-            <div className="cfg-size-input">
-              <label>ШИРИНА (м)</label>
-              <input type="number" min="1" max="200" value={wid} onChange={e=>setWid(e.target.value)} placeholder="8"/>
+            {/* Поля */}
+            <div style={{display:'flex',flexDirection:'column',gap:10}}>
+              {shapeConf.fields.map(f => (
+                <DimInput key={f.key} field={f} value={dims[f.key]} onChange={setDim}/>
+              ))}
             </div>
+          </div>
+        </div>
+
+        {/* 4. Высота конька */}
+        <div className="calc-row">
+          <div className="cfg-size-input">
+            <label>Высота конька, м <span style={{color:'var(--fg-soft)',fontWeight:400}}>(для информации)</span></label>
+            <input type="number" min="0" step="0.1" value={height}
+              onChange={e=>setHeight(e.target.value)} placeholder="0"/>
+          </div>
+        </div>
+
+        {/* 5. Карнизный свес */}
+        <div className="calc-row">
+          <div className="cfg-size-input">
+            <label>Вынос карнизного свеса, см</label>
+            <input type="number" min="0" step="5" value={eaves}
+              onChange={e=>setEaves(e.target.value)} placeholder="50"/>
+          </div>
+          <div style={{fontSize:12,color:'var(--fg-soft)',marginTop:4}}>
+            Добавляет площадь по периметру: периметр × свес(м)
+          </div>
+        </div>
+
+        {/* 6. Водосток */}
+        <div className="calc-row">
+          <div className="calc-row-head">
+            <span className="h" style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.05em',textTransform:'uppercase',color:'var(--fg-soft)'}}>
+              Сливы / водосток ({GUTTER_PRICE} ₽/пог.м)
+            </span>
+          </div>
+          <div className="calc-gutters-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:8}}>
+            {GUTTER_SIDES.map(s => {
+              const on = gutters.includes(s.id);
+              return (
+                <button key={s.id}
+                  className={'cfg-option'+(on?' active':'')}
+                  onClick={()=>toggleGutter(s.id)}
+                  style={{flexDirection:'row',gap:8,padding:'10px 12px',justifyContent:'flex-start'}}
+                >
+                  <span style={{
+                    width:14,height:14,borderRadius:3,border:'1.5px solid currentColor',
+                    display:'grid',placeItems:'center',flexShrink:0
+                  }}>
+                    {on && <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5">
+                      <path d="M4 12l5 5 11-11"/>
+                    </svg>}
+                  </span>
+                  <span className="lab" style={{fontFamily:'var(--font-mono)',fontSize:11}}>{s.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
       </div>
 
+      {/* ════ ПРАВАЯ КОЛОНКА — итого ════ */}
       <div className="calc-summary">
+        <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--fg-soft)',letterSpacing:'0.06em',textTransform:'uppercase',marginBottom:8}}>
+          Итоговый расчёт
+        </div>
+
         <div className="calc-line">
           <span>Площадь кровли</span>
-          <b>{area ? area+" м²" : "—"}</b>
+          <b>{totalArea != null ? fmtNum(totalArea)+' м²' : '—'}</b>
         </div>
+        {eavesArea > 0 && (
+          <div className="calc-line" style={{fontSize:12,color:'var(--fg-soft)'}}>
+            <span>в т.ч. свес</span>
+            <span>+{fmtNum(eavesArea)} м²</span>
+          </div>
+        )}
         <div className="calc-line">
-          <span>Стоимость материалов</span>
-          <b>{mat ? "от "+fmt(mat)+" ₽" : "—"}</b>
+          <span>Материалы</span>
+          <b>{matCost != null ? 'от '+fmtNum(matCost)+' ₽' : '—'}</b>
         </div>
+        {gutters.length > 0 && (
+          <div className="calc-line">
+            <span>Водосток{gutterLen>0 ? ' ('+fmtNum(gutterLen)+' пог.м)' : ''}</span>
+            <b>{gutterLen>0 ? fmtNum(gutterCost)+' ₽' : '—'}</b>
+          </div>
+        )}
         <div className="calc-line">
-          <span>Стоимость работ</span>
-          <b>{wrk ? "от "+fmt(wrk)+" ₽" : "—"}</b>
+          <span>Работы</span>
+          <b>{workCost != null ? 'от '+fmtNum(workCost)+' ₽' : '—'}</b>
         </div>
         <div className="calc-divider"/>
         <div className="calc-total">
           <span className="calc-total-k">ИТОГО</span>
-          <span className="calc-total-v">{tot ? fmt(tot)+" ₽" : "—"}</span>
+          <span className="calc-total-v">{total != null ? fmtNum(total)+' ₽' : '—'}</span>
         </div>
-        {tot && (
-          <div className="calc-line" style={{marginTop:-8}}>
-            <span></span>
-            <b style={{color:"var(--fg-soft)",fontWeight:400}}>≈ {fmt(Math.round(tot/area))} ₽/м²</b>
-          </div>
-        )}
         <div className="calc-divider"/>
         <p className="calc-note">Расчёт ориентировочный. Точную смету составим бесплатно после выезда замерщика.</p>
-        <a href="#contact" className="btn btn-dark btn-arrow" style={{marginTop:"auto"}}>
+        <a href="#contact" className="btn btn-dark btn-arrow" style={{marginTop:'auto'}} onClick={handleEstimate}>
           Получить точную смету
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M13 5l7 7-7 7"/>
+          </svg>
         </a>
       </div>
     </div>
@@ -2074,8 +2428,8 @@ function CalculatorSection() {
       <div className="container">
         <SectionHead
           eyebrow="03 / Калькулятор"
-          title="Прикиньте стоимость за минуту"
-          desc="Выберите покрытие, уклон и введите размеры дома — увидите предварительный бюджет. Точную смету составим бесплатно после замера."
+          title="Рассчитайте стоимость кровли"
+          desc="Выберите форму крыши и тип покрытия, введите размеры — итог обновляется мгновенно. Точную смету составим бесплатно после замера."
         />
         <Calculator/>
       </div>
