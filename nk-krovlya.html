@@ -2181,7 +2181,23 @@ function fmtNum(n) { return Math.round(n).toLocaleString('ru-RU'); }
 function DimInput({ field, value, onChange }) {
   const v       = value || '';
   const touched = v !== '';
-  const err     = touched && (parseFloat(v) <= 0 || isNaN(parseFloat(v)));
+  const num     = parseFloat(v);
+
+  // Считаем знаки после запятой без учёта хвостовых нулей (12.200 = 1 знак)
+  const decimals = v.includes('.')
+    ? v.split('.')[1].replace(/0+$/, '').length
+    : 0;
+
+  const errEmpty  = touched && (isNaN(num) || num <= 0);
+  const errMax    = touched && num > 100;
+  const errPrec   = touched && !errEmpty && decimals > 2;
+  const err       = errEmpty || errMax || errPrec;
+
+  const errMsg = errEmpty ? 'Поле не может быть пустым и равным 0'
+               : errMax   ? 'Максимальное значение — 100 м'
+               : errPrec  ? 'Допускается не более 2 знаков после запятой'
+               : null;
+
   return (
     <div className="cfg-size-input" style={{
       borderColor: err ? 'var(--warn)' : undefined,
@@ -2192,14 +2208,14 @@ function DimInput({ field, value, onChange }) {
         {' '}— {field.hint}
       </label>
       <input
-        type="number" min="0.1" step="0.1"
+        type="number" min="0.01" max="100" step="0.01"
         value={v}
         placeholder="0"
         onChange={e => onChange(field.key, e.target.value)}
       />
       {err && (
         <span style={{fontSize:10,color:'var(--warn)'}}>
-          Поле не может быть пустым и равным 0
+          {errMsg}
         </span>
       )}
     </div>
